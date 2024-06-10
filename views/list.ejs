@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List | Ugeon</title>
+    <link href="/main.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+            <div class="header">
+            </div>
+            <div class="contents">
+                <div class="title-container">
+                    <h2 class="logo">Todos</h2>
+                    <a class="nav-content" href="/write">Write</a>
+                </div>
+                <div class="list-container">
+                <% for (var i=0; i < 글목록.length; i++){ %>
+                    <div class="white-bg">
+                        <div class="list-box">
+                            <h4>
+                                <a href="/detail/<%= 글목록[i]._id %>">
+                                    <%= 글목록[i].title || '' %>
+                                </a>
+                                <div class="icon-box">
+                                    <a class="editer" href="/edit/<%= 글목록[i]._id %>">✏️</a>
+                                    <span class="delete" data-id="<%= 글목록[i]._id %>">🗑️</span>
+                                </div>
+                            </h4>
+                            <p>자세히 보기는 클릭</p>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-contents">
+                    Developer : 김우건 (Kim U Geon)</br>
+                    E-mail : ugeon322@naver.com
+                </p>
+            </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.delete').forEach(function (deleteIcon) {
+            deleteIcon.addEventListener('click', function () {
+                var postId = this.getAttribute('data-id');
+                fetch('/delete?docid=' + postId, {
+                    method: 'DELETE'
+                });
+            });
+        });
+        document.querySelectorAll('.delete').forEach(function (deleteIcon) {
+            deleteIcon.addEventListener('click', function () {
+                var postId = this.getAttribute('data-id');
+                var deletedElement = document.querySelector(`[data-id="${postId}"]`).closest('.white-bg');
+
+                fetch('/delete?docid=' + postId, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // 삭제가 성공하면 애니메이션을 추가하고 해당 DOM 요소를 삭제
+                            if (deletedElement) {
+                                deletedElement.classList.add('deleted');
+                                setTimeout(() => deletedElement.remove(), 300); // 0.3초 뒤에 요소를 삭제
+                            }
+                        } else {
+                            console.error('삭제에 실패했습니다.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('삭제 요청 중 오류가 발생했습니다.', error);
+                    });
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

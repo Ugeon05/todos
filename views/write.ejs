@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List | write</title>
+    <link href="/main.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+        </div>
+        <div class="contents">
+            <div class="title-container">
+              <h2 class="logo">Todos</h2>
+              <a class="nav-content" href="/list">Lists</a>
+          </div>
+            <form class="form-box" action="/add" method="POST">
+                <h4>제목</h4>
+                <input name="title">
+                <h4>내용</h4>
+                <textarea name="content" class="input-contents"></textarea>
+                <button type="submit">등록</button>
+            </form>
+            <div class="footer">
+                <p class="footer-contents">
+                    Developer : 김우건 (Kim U Geon)</br>
+                    E-mail : ugeon322@naver.com
+                </p>
+            </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        // Enter 키를 눌렀을 때 폼 제출을 막는 함수
+        function preventEnterSubmit(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+            }
+        }
+
+        // 폼 제출 함수
+        function submitForm(formId) {
+            // 폼을 여기서 제출하거나 원하는 작업 수행
+            alert('Form Submitted: ' + formId);
+        }
+
+        // 모든 폼에 Enter 키를 눌렀을 때 폼 제출 방지 이벤트 리스너 등록
+        document.querySelectorAll('form').forEach(function (form) {
+            form.addEventListener('keydown', preventEnterSubmit);
+        });
+
+        $(document).ready(function () {
+            $('form').submit(function (event) {
+                event.preventDefault();
+
+                $.post('/add', $(this).serialize())
+                    .done(function (data) {
+                        // 성공적인 응답일 경우
+                        window.location.href = '/list';
+                    })
+                    .fail(function (xhr) {
+                        // 실패한 응답일 경우
+                        alert(JSON.parse(xhr.responseText).message);
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>
